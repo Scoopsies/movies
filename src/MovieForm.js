@@ -9,8 +9,9 @@ const MovieForm = ({movies, setMovies}) => {
     const postMovie = async (ev) => {
         ev.preventDefault()
         const {data} = await axios.post('/api/movies', {name, stars})
-        console.log(data)
         setMovies([...movies, data])
+        setName('');
+        setStars(1)
     }
     
 
@@ -18,15 +19,15 @@ const MovieForm = ({movies, setMovies}) => {
     <form onSubmit={(ev)=> postMovie(ev)}>
         <label>
             Title:
-            <input onChange={(ev) => setName(ev.target.value)} type="text"></input>
+            <input value={name} onChange={(ev) => setName(ev.target.value)} type="text"></input>
         </label>
         <br/>
         <label>
             Rating:
-            <input onChange={(ev) => setStars(ev.target.value)} min={1} max={5} type="number"></input>
+            <input value={stars} onChange={(ev) => setStars(ev.target.value)} min={1} max={5} type="number"></input>
         </label>
         <br/>
-        <button>Submit</button>
+        <button disabled={name.length === 0} >Submit</button>
     </form>
   )
 };
