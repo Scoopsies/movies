@@ -76,6 +76,20 @@ app.post('/api/movies', async(req,res,next)=>{
   }
 });
 
+app.delete('/api/movies/:id', async (req,res,next)=>{
+  try {
+    const SQL = `
+      DELETE FROM movies
+      WHERE id=$1
+      RETURNING *
+    `;
+    const response = await client.query(SQL, [req.params.id]);
+    res.send(response.rows)
+  } catch (error) {
+    next(error)
+  }
+})
+
 const init = async()=> {
   await client.connect();
   console.log(`connected to ${client.database}`);

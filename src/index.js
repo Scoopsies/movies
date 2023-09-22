@@ -17,7 +17,7 @@ const App = ()=> {
 
   return (
     <>
-      <h1>Movies ({movies.length})</h1>
+      <h1>"The" Horror Movies ({movies.length})</h1>
       <MoviesList movies={movies} setMovies={setMovies}/>
     </>
   );
