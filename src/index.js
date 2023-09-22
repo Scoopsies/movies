@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import axios from 'axios';
+import MoviesList from './MoviesList';
 
 
 const App = ()=> {
@@ -14,20 +15,10 @@ const App = ()=> {
     getData()
   },[])
 
-  console.log(movies)
-
-
   return (
     <>
       <h1>Movies ({movies.length})</h1>
-      <h2>testing git</h2>
-      <ul>
-        {
-          movies.map(movie => {
-            return <li key={movie.id}>{movie.name}</li>
-          })
-        }
-      </ul>
+      <MoviesList movies={movies} setMovies={setMovies}/>
     </>
   );
 };

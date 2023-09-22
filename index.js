@@ -5,6 +5,8 @@ const app = express();
 const path = require('path');
 const { cli } = require('webpack');
 
+app.use(express.json())
+
 const homePage = path.join(__dirname, 'index.html');
 app.get('/', (req, res)=> res.sendFile(homePage));
 
@@ -22,31 +24,61 @@ app.get('/api/movies', async(req,res,next) =>{
     const SQL=`
       SELECT *
       FROM movies
-    `
-    const response = await client.query(SQL)
-    res.send(response.rows)
+      ORDER BY id
+    `;
+    const response = await client.query(SQL);
+    res.send(response.rows);
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
 app.get('/api/movies/:id', async(req,res,next) => {
   try {
     const SQL =`
       SELECT *
-      FROM MOVIES
+      FROM movies
       WHERE id=$1
     `;
     const response = await client.query(SQL, [req.params.id]);
+    res.send(response.rows[0]);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put('/api/movies/:id', async(req,res,next)=>{
+  try {
+    const SQL=`
+    UPDATE movies
+    SET name = $1, stars = $2
+    WHERE id = $3
+    RETURNING *
+    `
+    const response = await client.query(SQL, [req.body.name, req.body.stars, req.params.id ]);
     res.send(response.rows[0])
   } catch (error) {
     next(error)
   }
 })
 
+app.post('/api/movies', async(req,res,next)=>{
+  try {
+    const SQL =`
+    INSERT INTO movies(name, stars)
+    VALUES($1, $2)
+    RETURNING *
+    `;
+    const response = await client.query(SQL, [req.body.name, req.body.stars]);
+    res.send(response.rows);
+  } catch (error) {
+    next(error); 
+  }
+});
+
 const init = async()=> {
   await client.connect();
-  console.log('connected to database');
+  console.log(`connected to ${client.database}`);
   const SQL = `
     DROP TABLE IF EXISTS movies;
     CREATE TABLE movies(
