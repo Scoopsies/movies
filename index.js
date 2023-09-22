@@ -49,6 +49,9 @@ app.get('/api/movies/:id', async(req,res,next) => {
 
 app.put('/api/movies/:id', async(req,res,next)=>{
   try {
+    if (req.body.stars < 1 || req.body.stars > 5) {
+      throw new Error('Stars already max/min')
+    }
     const SQL=`
     UPDATE movies
     SET name = $1, stars = $2
@@ -64,13 +67,16 @@ app.put('/api/movies/:id', async(req,res,next)=>{
 
 app.post('/api/movies', async(req,res,next)=>{
   try {
+    if (req.body.stars < 1 || req.body.stars > 5) {
+      throw new Error('Stars must be inbetween 0 and 6')
+    }
     const SQL =`
     INSERT INTO movies(name, stars)
     VALUES($1, $2)
     RETURNING *
     `;
     const response = await client.query(SQL, [req.body.name, req.body.stars]);
-    res.send(response.rows);
+    res.send(response.rows[0]);
   } catch (error) {
     next(error); 
   }
@@ -88,6 +94,10 @@ app.delete('/api/movies/:id', async (req,res,next)=>{
   } catch (error) {
     next(error)
   }
+})
+
+app.use((err,req,res,next) => {
+  res.send(req)
 })
 
 const init = async()=> {
