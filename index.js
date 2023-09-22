@@ -50,7 +50,7 @@ app.get('/api/movies/:id', async(req,res,next) => {
 app.put('/api/movies/:id', async(req,res,next)=>{
   try {
     if (req.body.stars < 1 || req.body.stars > 5) {
-      throw new Error('Stars already max/min')
+      throw new Error('Invalid Rating')
     }
     const SQL=`
     UPDATE movies
@@ -68,7 +68,7 @@ app.put('/api/movies/:id', async(req,res,next)=>{
 app.post('/api/movies', async(req,res,next)=>{
   try {
     if (req.body.stars < 1 || req.body.stars > 5) {
-      throw new Error('Stars must be inbetween 0 and 6')
+      throw new Error('Invalid Rating')
     }
     const SQL =`
     INSERT INTO movies(name, stars)
@@ -97,7 +97,7 @@ app.delete('/api/movies/:id', async (req,res,next)=>{
 })
 
 app.use((err,req,res,next) => {
-  res.send(req)
+  res.status(500).send(err.message)
 })
 
 const init = async()=> {
