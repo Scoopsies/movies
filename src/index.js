@@ -20,6 +20,7 @@ const App = ()=> {
   return (
     <>
       <h1>Movies ({movies.length})</h1>
+      <h2>testing git</h2>
       <ul>
         {
           movies.map(movie => {
